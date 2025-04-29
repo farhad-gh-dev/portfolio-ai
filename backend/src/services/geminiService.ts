@@ -1,0 +1,77 @@
+import dotenv from "dotenv";
+import {
+  GoogleGenerativeAI,
+  HarmCategory,
+  HarmBlockThreshold,
+} from "@google/generative-ai";
+
+dotenv.config();
+
+const API_KEY = process.env.GEMINI_API_KEY;
+
+if (!API_KEY) {
+  throw new Error("Missing GEMINI_API_KEY environment variable.");
+}
+
+const genAI = new GoogleGenerativeAI(API_KEY);
+
+const model = genAI.getGenerativeModel({
+  model: "gemini-2.0-flash",
+});
+
+// Optional: Configure safety settings if needed
+// See: https://ai.google.dev/docs/safety_setting_gemini
+const safetySettings = [
+  {
+    category: HarmCategory.HARM_CATEGORY_HARASSMENT,
+    threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
+  },
+  {
+    category: HarmCategory.HARM_CATEGORY_HATE_SPEECH,
+    threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
+  },
+  {
+    category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT,
+    threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
+  },
+  {
+    category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
+    threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
+  },
+];
+
+// --- Option 1: Simple Text Generation ---
+export async function generateSimpleText(prompt: string): Promise<string> {
+  try {
+    const result = await model.generateContent(prompt);
+    const response = result.response;
+    const text = response.text();
+    return text;
+  } catch (error) {
+    console.error("Error generating text:", error);
+    throw new Error("Failed to get response from AI model.");
+  }
+}
+
+// --- Option 2: Conversational Chat ---
+export async function continueChat(message: string, history: any[] = []) {
+  try {
+    const chat = model.startChat({
+      history: history,
+      // generationConfig: { maxOutputTokens: 100 },
+      // safetySettings
+    });
+
+    const result = await chat.sendMessage(message);
+    const response = result.response;
+    const text = response.text();
+
+    return { reply: text };
+  } catch (error) {
+    console.error("Error in chat conversation:", error);
+    if (error instanceof Error && error.message.includes("SAFETY")) {
+      return { reply: "The response was blocked due to safety concerns." };
+    }
+    throw new Error("Failed to get chat response from AI model.");
+  }
+}
