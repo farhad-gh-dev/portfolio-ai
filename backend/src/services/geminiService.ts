@@ -3,6 +3,7 @@ import {
   GoogleGenerativeAI,
   HarmCategory,
   HarmBlockThreshold,
+  ChatSession,
 } from "@google/generative-ai";
 
 dotenv.config();
@@ -40,6 +41,9 @@ const safetySettings = [
   },
 ];
 
+// Store active chat sessions by clientId
+const activeChatSessions = new Map<string, ChatSession>();
+
 // --- Option 1: Simple Text Generation ---
 export async function generateSimpleText(prompt: string): Promise<string> {
   try {
@@ -54,13 +58,36 @@ export async function generateSimpleText(prompt: string): Promise<string> {
 }
 
 // --- Option 2: Conversational Chat ---
-export async function continueChat(message: string, history: any[] = []) {
+export async function continueChat(
+  message: string,
+  history: any[] = [],
+  clientId?: string
+) {
   try {
-    const chat = model.startChat({
-      history: history,
-      // generationConfig: { maxOutputTokens: 100 },
-      // safetySettings
-    });
+    let chat: ChatSession;
+
+    // If clientId is provided, try to use or create a persistent chat session
+    if (clientId) {
+      if (!activeChatSessions.has(clientId)) {
+        // Create a new chat session for this client
+        chat = model.startChat({
+          history: history,
+          // generationConfig: { maxOutputTokens: 100 },
+          // safetySettings
+        });
+        activeChatSessions.set(clientId, chat);
+      } else {
+        // Use existing chat session
+        chat = activeChatSessions.get(clientId)!;
+      }
+    } else {
+      // Fallback to non-persistent chat if no clientId provided
+      chat = model.startChat({
+        history: history,
+        // generationConfig: { maxOutputTokens: 100 },
+        // safetySettings
+      });
+    }
 
     const result = await chat.sendMessage(message);
     const response = result.response;
@@ -73,5 +100,19 @@ export async function continueChat(message: string, history: any[] = []) {
       return { reply: "The response was blocked due to safety concerns." };
     }
     throw new Error("Failed to get chat response from AI model.");
+  }
+}
+
+// Function to clear a chat session or all sessions
+export function clearChatSession(clientId?: string) {
+  if (clientId) {
+    activeChatSessions.delete(clientId);
+    return {
+      success: true,
+      message: `Chat session for client ${clientId} cleared`,
+    };
+  } else {
+    activeChatSessions.clear();
+    return { success: true, message: "All chat sessions cleared" };
   }
 }

@@ -1,7 +1,8 @@
 import express, { Request, Response } from "express";
 import { createServer } from "http";
-import { WebSocketServer } from "ws";
-import { continueChat } from "./services/geminiService";
+import { WebSocketServer, WebSocket } from "ws";
+import { continueChat, clearChatSession } from "./services/geminiService";
+import { v4 as uuidv4 } from "uuid";
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -10,14 +11,34 @@ const wss = new WebSocketServer({ server });
 
 app.use(express.json());
 
+// Track client connections with unique IDs
+const clients = new Map<WebSocket, string>();
+
 // WebSocket connection handling
 wss.on("connection", (ws) => {
-  console.log("Client connected");
+  // Assign a unique client ID for this connection
+  const clientId = uuidv4();
+  clients.set(ws, clientId);
+
+  console.log(`Client connected with ID: ${clientId}`);
 
   ws.on("message", async (message) => {
     try {
       const parsedMessage = JSON.parse(message.toString());
-      const { text, history } = parsedMessage;
+      const { text, history, action } = parsedMessage;
+
+      // Handle special actions
+      if (action === "clear_conversation") {
+        clearChatSession(clientId);
+        ws.send(
+          JSON.stringify({
+            type: "system_message",
+            message: "Conversation has been cleared.",
+            timestamp: new Date().toISOString(),
+          })
+        );
+        return;
+      }
 
       if (!text || typeof text !== "string") {
         ws.send(
@@ -28,10 +49,10 @@ wss.on("connection", (ws) => {
         return;
       }
 
-      console.log(`Received message: ${text}`);
+      console.log(`Received message from ${clientId}: ${text}`);
 
-      // Process the message with Gemini
-      const chatResponse = await continueChat(text, history || []);
+      // Process the message with Gemini using persistent chat sessions
+      const chatResponse = await continueChat(text, history || [], clientId);
 
       // Send the response back to the client
       ws.send(
@@ -52,7 +73,9 @@ wss.on("connection", (ws) => {
   });
 
   ws.on("close", () => {
-    console.log("Client disconnected");
+    console.log(`Client disconnected: ${clients.get(ws)}`);
+    // Note: We don't clear the chat session on disconnect to allow reconnection
+    clients.delete(ws);
   });
 
   // Send a welcome message when client connects
@@ -60,6 +83,7 @@ wss.on("connection", (ws) => {
     JSON.stringify({
       type: "connection_established",
       message: "Connected to Gemini Chat Backend",
+      clientId: clientId,
       timestamp: new Date().toISOString(),
     })
   );
@@ -68,7 +92,7 @@ wss.on("connection", (ws) => {
 // --- Chat Endpoint ---
 app.post("/api/chat", async (req: Request, res: Response) => {
   try {
-    const { message, history } = req.body;
+    const { message, history, clientId } = req.body;
 
     if (!message || typeof message !== "string") {
       return res
@@ -82,11 +106,23 @@ app.post("/api/chat", async (req: Request, res: Response) => {
         .json({ error: "History must be an array if provided." });
     }
 
-    const chatResponse = await continueChat(message, history);
+    const chatResponse = await continueChat(message, history, clientId);
 
     res.json(chatResponse);
   } catch (error) {
     console.error("Error in /api/chat endpoint:", error);
+    res.status(500).json({ error: "An internal server error occurred." });
+  }
+});
+
+// --- Clear Chat Endpoint ---
+app.post("/api/clear-chat", (req: Request, res: Response) => {
+  try {
+    const { clientId } = req.body;
+    const result = clearChatSession(clientId);
+    res.json(result);
+  } catch (error) {
+    console.error("Error in /api/clear-chat endpoint:", error);
     res.status(500).json({ error: "An internal server error occurred." });
   }
 });
