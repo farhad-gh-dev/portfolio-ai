@@ -1,4 +1,6 @@
 import dotenv from "dotenv";
+import fs from "fs";
+import path from "path";
 import {
   GoogleGenerativeAI,
   HarmCategory,
@@ -41,7 +43,26 @@ const safetySettings = [
   },
 ];
 
-// Store active chat sessions by clientId
+const INSTRUCTIONS_PATH = path.join(
+  __dirname,
+  "../config/systemInstructions.txt"
+);
+let instructionsText = "";
+
+try {
+  instructionsText = fs.readFileSync(INSTRUCTIONS_PATH, "utf8");
+  console.log("System instructions loaded from file successfully");
+} catch (error) {
+  console.error("Error reading system instructions file:", error);
+  instructionsText =
+    "You are an AI assistant for Farhan's portfolio website. Be professional and helpful.";
+}
+
+const DEFAULT_SYSTEM_INSTRUCTIONS = {
+  role: "system",
+  parts: [{ text: instructionsText }],
+};
+
 const activeChatSessions = new Map<string, ChatSession>();
 
 // --- Option 1: Simple Text Generation ---
@@ -61,10 +82,26 @@ export async function generateSimpleText(prompt: string): Promise<string> {
 export async function continueChat(
   message: string,
   history: any[] = [],
-  clientId?: string
+  clientId?: string,
+  customInstructions?: string
 ) {
   try {
     let chat: ChatSession;
+
+    // Use custom instructions if provided, otherwise use default
+    let systemInstructions = DEFAULT_SYSTEM_INSTRUCTIONS;
+
+    // If custom instructions are provided as a string, format them correctly
+    if (customInstructions && typeof customInstructions === "string") {
+      systemInstructions = {
+        role: "system",
+        parts: [
+          {
+            text: customInstructions,
+          },
+        ],
+      };
+    }
 
     // If clientId is provided, try to use or create a persistent chat session
     if (clientId) {
@@ -72,8 +109,9 @@ export async function continueChat(
         // Create a new chat session for this client
         chat = model.startChat({
           history: history,
+          systemInstruction: systemInstructions,
+          safetySettings,
           // generationConfig: { maxOutputTokens: 100 },
-          // safetySettings
         });
         activeChatSessions.set(clientId, chat);
       } else {
@@ -84,8 +122,9 @@ export async function continueChat(
       // Fallback to non-persistent chat if no clientId provided
       chat = model.startChat({
         history: history,
+        systemInstruction: systemInstructions,
+        safetySettings,
         // generationConfig: { maxOutputTokens: 100 },
-        // safetySettings
       });
     }
 
