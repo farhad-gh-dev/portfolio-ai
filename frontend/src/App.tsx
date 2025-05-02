@@ -1,10 +1,15 @@
+import { useState, useEffect } from "react";
 import { useWebSocketChat } from "./hooks/useWebSocketChat";
-import MessageList from "./components/MessageList";
 import ChatControls from "./components/ChatControls";
+import { Loading } from "./components/Loading";
+import { DisconnectMessage } from "./components/DisconnectMessage";
 import "./App.scss";
 
 function App() {
   const SOCKET_URL = "ws://localhost:3000"; // Connect to your backend WebSocket server
+  const [lastAiMessage, setLastAiMessage] = useState<string | undefined>(
+    undefined
+  );
 
   const {
     messages,
@@ -15,6 +20,21 @@ function App() {
     connecting,
     readyState,
   } = useWebSocketChat(SOCKET_URL);
+
+  // Update last AI message whenever messages change
+  useEffect(() => {
+    if (messages.length === 0) {
+      setLastAiMessage(undefined);
+      return;
+    }
+
+    // Find the latest AI message
+    const aiMessages = messages.filter((msg) => msg.sender === "ai");
+    if (aiMessages.length > 0) {
+      const latest = aiMessages[aiMessages.length - 1];
+      setLastAiMessage(latest.text);
+    }
+  }, [messages]);
 
   const handleSendMessage = () => {
     if (inputMessage.trim() !== "") {
@@ -29,50 +49,39 @@ function App() {
       case 3:
         return "disconnected-bg";
       default:
-        return "connecting-bg"; // Using disconnected as the default/fallback option
+        return "connecting-bg";
     }
   };
   const backgroundClass = getBackgroundClass();
-
-  console.log("readyState:", readyState);
 
   const renderBody = () => {
     if (readyState === 1) {
       return (
         <div className="ai-chat">
           <div className="ai-chat-container">
-            <MessageList messages={messages} />
-
             <ChatControls
               inputMessage={inputMessage}
               setInputMessage={setInputMessage}
               onSendMessage={handleSendMessage}
               onClearChat={clearChat}
               connecting={connecting}
+              lastAiMessage={lastAiMessage}
             />
           </div>
         </div>
       );
     } else if (readyState === 3) {
-      return (
-        <div className="flex-center">
-          <h2>Disconnected</h2>
-          <p>Please check your connection or try again later.</p>
-        </div>
-      );
+      return <DisconnectMessage />;
     } else {
-      return (
-        <div className="flex-center">
-          <div className="loader"></div>
-          <h2>Connecting to the AI Chat Service...</h2>
-          <p>Please wait while we establish a connection.</p>
-        </div>
-      );
+      return <Loading />;
     }
   };
 
   return (
-    <div className={`app-container ${backgroundClass}`}>{renderBody()}</div>
+    <div className={`app-container`}>
+      <div className={`bg-image ${backgroundClass}`} />
+      <div className="content-container">{renderBody()}</div>
+    </div>
   );
 }
 

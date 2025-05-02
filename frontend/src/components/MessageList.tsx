@@ -23,11 +23,8 @@ const MessageList: React.FC<MessageListProps> = ({ messages }) => {
             {message.sender === "ai" ? (
               <TypeWriter text={message.text} />
             ) : (
-              message.text
+              <span className="user-message">{message.text}</span>
             )}
-          </div>
-          <div className="message-timestamp">
-            {new Date(message.timestamp).toLocaleTimeString()}
           </div>
         </div>
       ))}

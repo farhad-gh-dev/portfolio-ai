@@ -1,13 +1,14 @@
 /* Typewriter animation styles */
 .typewriter {
   display: inline-block;
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .cursor {
   display: inline-block;
-  width: 3px;
-  height: 18px;
-  background-color: var(--text-color);
+  width: 2px;
+  height: 20px;
+  background-color: white;
   margin-left: 2px;
   vertical-align: middle;
   animation: blink 0.7s infinite;
