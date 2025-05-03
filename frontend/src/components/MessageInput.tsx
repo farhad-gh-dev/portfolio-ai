@@ -8,7 +8,7 @@ interface MessageInputProps {
   disabled: boolean;
   isLoading?: boolean;
   placeholder?: string;
-  hasConversationStarted?: boolean;
+  clearInputOnSend?: boolean;
 }
 
 const MessageInput: React.FC<MessageInputProps> = ({
@@ -16,19 +16,12 @@ const MessageInput: React.FC<MessageInputProps> = ({
   onChange,
   onSend,
   disabled,
-  isLoading = false,
-  placeholder = "Ask something about me...",
-  hasConversationStarted = false,
+  clearInputOnSend = false,
 }) => {
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
   const [isInputFocused, setIsInputFocused] = useState(false);
-
-  useEffect(() => {
-    // Auto-focus the input when component mounts
-    if (!isLoading && inputRef.current) {
-      inputRef.current.focus();
-    }
-  }, [isLoading]);
+  const [hasBeenSent, setHasBeenSent] = useState(false);
+  const [scrollHeight, setScrollHeight] = useState(0);
 
   const handlePlaceholderClick = () => {
     setIsInputFocused(true);
@@ -37,20 +30,58 @@ const MessageInput: React.FC<MessageInputProps> = ({
     }
   };
 
+  const handleSend = () => {
+    onSend();
+    setHasBeenSent(true);
+    if (clearInputOnSend) {
+      onChange("");
+    }
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
+    }
+  };
+
+  const handleFocus = () => {
+    // Clear the input when focused after sending
+    if (hasBeenSent) {
+      onChange("");
+      setHasBeenSent(false);
+    }
+  };
+
+  useEffect(() => {
+    const el = inputRef.current;
+    if (!el) return;
+
+    el.style.height = "auto";
+    const newHeight = el.scrollHeight;
+    el.style.height = `${newHeight}px`;
+    setScrollHeight(newHeight);
+  }, [value]);
+
   return (
     <div className="message-input-container">
-      {hasConversationStarted || isInputFocused ? (
-        <input
+      {value != "" || isInputFocused ? (
+        <textarea
           ref={inputRef}
-          type="text"
           value={value}
-          onChange={(e) => onChange(e.target.value)}
-          onKeyPress={(e) => e.key === "Enter" && onSend()}
+          onChange={(e) => {
+            setScrollHeight(e.target.scrollHeight);
+            onChange(e.target.value);
+          }}
+          onKeyPress={handleKeyPress}
+          onFocus={handleFocus}
           onBlur={() => value === "" && setIsInputFocused(false)}
-          placeholder={placeholder}
+          placeholder="what's in your mind?"
           disabled={disabled}
           className="message-input"
           autoFocus
+          rows={1}
+          style={{ height: `${scrollHeight}px` }}
         />
       ) : (
         <div

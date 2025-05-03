@@ -20,11 +20,14 @@
 }
 
 .answer-side {
-  align-self: flex-end;
+  display: flex;
+  height: 100%;
 }
 
 .answer-placeholder {
   text-align: left;
+  display: flex;
+  align-items: flex-end;
   height: 100%;
   width: 100%;
   color: rgba(255, 255, 255, 0.85);
@@ -33,10 +36,40 @@
 }
 
 .answer-container {
-  width: 100%;
-  height: 100%;
+  align-self: flex-end;
   display: flex;
-  justify-content: center;
   align-items: center;
-  padding: 20px;
+  height: 280px;
+  overflow-y: auto;
+  padding-right: 5px;
+}
+
+/* Scrollbar Styling */
+.answer-container::-webkit-scrollbar {
+  width: 4px;
+}
+
+.answer-container::-webkit-scrollbar-track {
+  background-color: rgba(255, 255, 255, 0.15);
+  -webkit-border-radius: 4px;
+  border-radius: 4px;
+}
+
+.answer-container::-webkit-scrollbar-thumb {
+  -webkit-border-radius: 4px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.loading-answer {
+  animation: pulse-opacity 0.5s infinite alternate;
+}
+
+@keyframes pulse-opacity {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0.6;
+  }
 }

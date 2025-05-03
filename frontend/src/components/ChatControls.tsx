@@ -20,27 +20,26 @@ const ChatControls: React.FC<ChatControlsProps> = ({
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [currentAnswer, setCurrentAnswer] = useState("");
-  const [hasConversationStarted, setHasConversationStarted] = useState(false);
 
-  // When a new AI message comes in, set it as current answer and clear loading state
   useEffect(() => {
     if (lastAiMessage) {
       setCurrentAnswer(lastAiMessage);
       setIsLoading(false);
-      setHasConversationStarted(true);
     }
   }, [lastAiMessage]);
 
   const handleSendMessage = () => {
     if (inputMessage.trim() !== "") {
-      setIsLoading(true); // Set loading state when message is sent
+      setIsLoading(true);
       onSendMessage();
     }
   };
 
   return (
     <div className="split-layout">
-      <div className="chat-side input-side">
+      <div
+        className={`chat-side input-side ${isLoading ? "loading-answer" : ""}`}
+      >
         <MessageInput
           value={inputMessage}
           onChange={setInputMessage}
@@ -48,22 +47,13 @@ const ChatControls: React.FC<ChatControlsProps> = ({
           disabled={connecting || isLoading}
           isLoading={isLoading}
           placeholder="Ask something about me..."
-          hasConversationStarted={hasConversationStarted}
         />
       </div>
       <div className="split-border"></div>
       <div className="chat-side answer-side">
-        {isLoading ? (
-          <div className="loading-container">
-            <div className="loading-dots">
-              <span className="dot"></span>
-              <span className="dot"></span>
-              <span className="dot"></span>
-            </div>
-          </div>
-        ) : currentAnswer ? (
-          <div className="answer-container">
-            <div className="message-answer">{currentAnswer}</div>
+        {currentAnswer ? (
+          <div className={"answer-container"}>
+            <p className="message-answer">{currentAnswer}</p>
           </div>
         ) : (
           <div className="answer-placeholder cherish-regular">

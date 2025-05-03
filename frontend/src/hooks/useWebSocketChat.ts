@@ -121,7 +121,8 @@ export const useWebSocketChat = (socketUrl: string): UseWebSocketChatResult => {
         })
       );
 
-      setInputMessage("");
+      // Removed the line: setInputMessage("");
+      // The input is now managed by the MessageInput component
     },
     [messages, clientId, sendWebSocketMessage]
   );

@@ -5,25 +5,30 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  height: 280px;
+  position: relative;
 }
 
 .message-input {
+  font-family: "Arsenal SC", sans-serif;
   background-color: transparent;
+  color: #002263;
   border: none;
-  color: white;
   font-size: 40px;
-  width: 90%;
-  text-align: right;
   outline: none;
   caret-color: white;
-  caret-shape: block;
-  animation: blink 1s infinite;
-  transition: font-size 0.3s ease;
+  resize: none;
   width: 100%;
+  white-space: normal;
+  word-wrap: break-word;
+  padding: 0;
+  text-align: right !important;
+  min-height: 100px;
+  height: auto;
 }
 
 .message-input::placeholder {
-  color: rgba(255, 255, 255, 0.3);
+  color: rgba(0, 34, 99, 0.5);
 }
 
 /* Blinking cursor animation */
@@ -55,17 +60,13 @@
 .message-answer {
   background-color: transparent;
   color: white;
-  font-size: 28px;
-  padding: 20px;
-  width: 90%;
+  font-size: 18px;
+  width: 100%;
   text-align: left;
-  background-color: rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(5px);
   border-radius: 8px;
-  padding: 30px;
-  max-height: 80vh;
   overflow-y: auto;
-  line-height: 1.5;
+  white-space: normal;
+  word-wrap: break-word;
 }
 
 /* Loading indicator styling */
