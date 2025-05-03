@@ -18,23 +18,18 @@ const ChatControls: React.FC<ChatControlsProps> = ({
   connecting,
   lastAiMessage,
 }) => {
-  const [isAnswerMode, setIsAnswerMode] = useState(false);
-  const [currentAnswer, setCurrentAnswer] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [currentAnswer, setCurrentAnswer] = useState("");
+  const [hasConversationStarted, setHasConversationStarted] = useState(false);
 
-  // When a new AI message comes in, switch to answer mode and clear loading state
+  // When a new AI message comes in, set it as current answer and clear loading state
   useEffect(() => {
     if (lastAiMessage) {
       setCurrentAnswer(lastAiMessage);
-      setIsAnswerMode(true);
       setIsLoading(false);
+      setHasConversationStarted(true);
     }
   }, [lastAiMessage]);
-
-  const handleAnswerClick = () => {
-    setIsAnswerMode(false);
-    setInputMessage(""); // Clear input when going back to input mode
-  };
 
   const handleSendMessage = () => {
     if (inputMessage.trim() !== "") {
@@ -44,17 +39,38 @@ const ChatControls: React.FC<ChatControlsProps> = ({
   };
 
   return (
-    <div className="ai-chat-controls centered-control">
-      <MessageInput
-        value={inputMessage}
-        onChange={setInputMessage}
-        onSend={handleSendMessage}
-        disabled={connecting || isLoading}
-        isAnswerMode={isAnswerMode}
-        answerText={currentAnswer}
-        onAnswerClick={handleAnswerClick}
-        isLoading={isLoading}
-      />
+    <div className="split-layout">
+      <div className="chat-side input-side">
+        <MessageInput
+          value={inputMessage}
+          onChange={setInputMessage}
+          onSend={handleSendMessage}
+          disabled={connecting || isLoading}
+          isLoading={isLoading}
+          placeholder="Ask something about me..."
+          hasConversationStarted={hasConversationStarted}
+        />
+      </div>
+      <div className="split-border"></div>
+      <div className="chat-side answer-side">
+        {isLoading ? (
+          <div className="loading-container">
+            <div className="loading-dots">
+              <span className="dot"></span>
+              <span className="dot"></span>
+              <span className="dot"></span>
+            </div>
+          </div>
+        ) : currentAnswer ? (
+          <div className="answer-container">
+            <div className="message-answer">{currentAnswer}</div>
+          </div>
+        ) : (
+          <div className="answer-placeholder cherish-regular">
+            <p>And the Answer might Surprise you</p>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

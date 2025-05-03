@@ -1,16 +1,14 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./MessageInput.scss";
-import TypeWriter from "./TypeWriter";
 
 interface MessageInputProps {
   value: string;
   onChange: (value: string) => void;
   onSend: () => void;
   disabled: boolean;
-  isAnswerMode?: boolean;
-  answerText?: string;
-  onAnswerClick?: () => void;
   isLoading?: boolean;
+  placeholder?: string;
+  hasConversationStarted?: boolean;
 }
 
 const MessageInput: React.FC<MessageInputProps> = ({
@@ -18,61 +16,50 @@ const MessageInput: React.FC<MessageInputProps> = ({
   onChange,
   onSend,
   disabled,
-  isAnswerMode = false,
-  answerText = "",
-  onAnswerClick,
   isLoading = false,
+  placeholder = "Ask something about me...",
+  hasConversationStarted = false,
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
+  const [isInputFocused, setIsInputFocused] = useState(false);
 
   useEffect(() => {
-    // Auto-focus the input when component mounts or switches back to input mode
-    if (!isAnswerMode && !isLoading) {
-      inputRef.current?.focus();
+    // Auto-focus the input when component mounts
+    if (!isLoading && inputRef.current) {
+      inputRef.current.focus();
     }
-  }, [isAnswerMode, isLoading]);
+  }, [isLoading]);
 
-  // Show loading indicator
-  if (isLoading) {
-    return (
-      <div className="message-input-container loading-container">
-        <div className="loading-dots">
-          <span className="dot"></span>
-          <span className="dot"></span>
-          <span className="dot"></span>
-        </div>
-      </div>
-    );
-  }
+  const handlePlaceholderClick = () => {
+    setIsInputFocused(true);
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  };
 
-  // Show answer that can be clicked to go back to input
-  if (isAnswerMode && answerText) {
-    return (
-      <div
-        className="message-input-container answer-mode"
-        onClick={onAnswerClick}
-      >
-        <div className="message-answer">
-          <TypeWriter text={answerText} />
-        </div>
-      </div>
-    );
-  }
-
-  // Default input mode
   return (
     <div className="message-input-container">
-      <input
-        ref={inputRef}
-        type="text"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        onKeyPress={(e) => e.key === "Enter" && onSend()}
-        placeholder=""
-        disabled={disabled}
-        className="message-input"
-        autoFocus
-      />
+      {hasConversationStarted || isInputFocused ? (
+        <input
+          ref={inputRef}
+          type="text"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          onKeyPress={(e) => e.key === "Enter" && onSend()}
+          onBlur={() => value === "" && setIsInputFocused(false)}
+          placeholder={placeholder}
+          disabled={disabled}
+          className="message-input"
+          autoFocus
+        />
+      ) : (
+        <div
+          className="input-placeholder-container cherish-regular"
+          onClick={handlePlaceholderClick}
+        >
+          <p>Ask Something About me</p>
+        </div>
+      )}
     </div>
   );
 };

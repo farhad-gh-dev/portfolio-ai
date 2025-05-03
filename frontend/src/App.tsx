@@ -4,6 +4,7 @@ import ChatControls from "./components/ChatControls";
 import { Loading } from "./components/Loading";
 import { DisconnectMessage } from "./components/DisconnectMessage";
 import "./App.scss";
+import { BackgroundContainer } from "./components/BackgroundContainer";
 
 function App() {
   const SOCKET_URL = "ws://localhost:3000"; // Connect to your backend WebSocket server
@@ -34,6 +35,8 @@ function App() {
       const latest = aiMessages[aiMessages.length - 1];
       setLastAiMessage(latest.text);
     }
+
+    console.log("Messages:", messages);
   }, [messages]);
 
   const handleSendMessage = () => {
@@ -42,32 +45,18 @@ function App() {
     }
   };
 
-  const getBackgroundClass = () => {
-    switch (readyState) {
-      case 1:
-        return "connected-bg";
-      case 3:
-        return "disconnected-bg";
-      default:
-        return "connecting-bg";
-    }
-  };
-  const backgroundClass = getBackgroundClass();
-
   const renderBody = () => {
     if (readyState === 1) {
       return (
-        <div className="ai-chat">
-          <div className="ai-chat-container">
-            <ChatControls
-              inputMessage={inputMessage}
-              setInputMessage={setInputMessage}
-              onSendMessage={handleSendMessage}
-              onClearChat={clearChat}
-              connecting={connecting}
-              lastAiMessage={lastAiMessage}
-            />
-          </div>
+        <div className="ai-chat-container">
+          <ChatControls
+            inputMessage={inputMessage}
+            setInputMessage={setInputMessage}
+            onSendMessage={handleSendMessage}
+            onClearChat={clearChat}
+            connecting={connecting}
+            lastAiMessage={lastAiMessage}
+          />
         </div>
       );
     } else if (readyState === 3) {
@@ -78,9 +67,12 @@ function App() {
   };
 
   return (
-    <div className={`app-container`}>
-      <div className={`bg-image ${backgroundClass}`} />
+    <div className="app-container">
+      <BackgroundContainer readyState={readyState} />
       <div className="content-container">{renderBody()}</div>
+      <div className="copyright">
+        <span>Designed and Developed by Farhad</span>
+      </div>
     </div>
   );
 }
