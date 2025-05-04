@@ -3,39 +3,24 @@ import useWebSocket from "react-use-websocket";
 import { Message, WebSocketResponse } from "../types";
 
 interface UseWebSocketChatResult {
-  messages: Message[];
-  sendMessage: (text: string) => void;
-  clearChat: () => void;
-  inputMessage: string;
-  setInputMessage: (message: string) => void;
-  connecting: boolean;
-  connectionStatus: string;
   readyState: number;
+  messages: Message[];
+  lastResponse: string;
+  isLoading: boolean;
+  sendMessage: (text: string) => void;
 }
 
 export const useWebSocketChat = (socketUrl: string): UseWebSocketChatResult => {
   const [messages, setMessages] = useState<Message[]>([]);
-  const [inputMessage, setInputMessage] = useState("");
-  const [connecting, setConnecting] = useState(true);
   const [clientId, setClientId] = useState<string | null>(null);
+  const [lastResponse, setLastResponse] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const {
     sendMessage: sendWebSocketMessage,
     lastMessage,
     readyState,
   } = useWebSocket(socketUrl, {
-    onOpen: () => {
-      console.log("WebSocket connection established");
-      setConnecting(false);
-    },
-    onClose: () => {
-      console.log("WebSocket connection closed");
-      setConnecting(true);
-    },
-    onError: (event) => {
-      console.error("WebSocket error:", event);
-      setConnecting(true);
-    },
     reconnectAttempts: 10,
     reconnectInterval: 2000,
   });
@@ -57,6 +42,7 @@ export const useWebSocketChat = (socketUrl: string): UseWebSocketChatResult => {
             },
           ]);
         } else if (data.type === "text_response") {
+          setLastResponse(data.message);
           setMessages((prev) => [
             ...prev,
             {
@@ -65,6 +51,7 @@ export const useWebSocketChat = (socketUrl: string): UseWebSocketChatResult => {
               timestamp: data.timestamp,
             },
           ]);
+          setIsLoading(false); // Set loading to false when response is received
         } else if (data.type === "system_message") {
           setMessages((prev) => [
             ...prev,
@@ -74,6 +61,7 @@ export const useWebSocketChat = (socketUrl: string): UseWebSocketChatResult => {
               timestamp: data.timestamp,
             },
           ]);
+          setIsLoading(false); // Set loading to false for system messages too
         } else if (data.error) {
           setMessages((prev) => [
             ...prev,
@@ -83,9 +71,11 @@ export const useWebSocketChat = (socketUrl: string): UseWebSocketChatResult => {
               timestamp: new Date().toISOString(),
             },
           ]);
+          setIsLoading(false); // Set loading to false when error occurs
         }
       } catch (error) {
         console.error("Error parsing WebSocket message:", error);
+        setIsLoading(false); // Set loading to false on parsing errors
       }
     }
   }, [lastMessage]);
@@ -93,6 +83,8 @@ export const useWebSocketChat = (socketUrl: string): UseWebSocketChatResult => {
   const sendMessage = useCallback(
     (text: string) => {
       if (text.trim() === "") return;
+
+      setIsLoading(true);
 
       // Add user message to chat
       const timestamp = new Date().toISOString();
@@ -120,39 +112,15 @@ export const useWebSocketChat = (socketUrl: string): UseWebSocketChatResult => {
           ...(historyForGemini.length > 0 && { history: historyForGemini }),
         })
       );
-
-      // Removed the line: setInputMessage("");
-      // The input is now managed by the MessageInput component
     },
     [messages, clientId, sendWebSocketMessage]
   );
 
-  const clearChat = useCallback(() => {
-    sendWebSocketMessage(
-      JSON.stringify({
-        action: "clear_conversation",
-        clientId,
-      })
-    );
-  }, [clientId, sendWebSocketMessage]);
-
-  const connectionStatusMap: { [key: number]: string } = {
-    [WebSocket.CONNECTING]: "connecting",
-    [WebSocket.OPEN]: "connected",
-    [WebSocket.CLOSING]: "closing",
-    [WebSocket.CLOSED]: "disconnected",
-  };
-
-  const connectionStatus = connectionStatusMap[readyState] ?? "Unknown";
-
   return {
-    messages,
-    sendMessage,
-    clearChat,
-    inputMessage,
-    setInputMessage,
-    connecting,
-    connectionStatus,
     readyState,
+    messages,
+    lastResponse,
+    isLoading,
+    sendMessage,
   };
 };

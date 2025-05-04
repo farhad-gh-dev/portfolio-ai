@@ -1,0 +1,54 @@
+.response-display {
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+  height: 100%;
+}
+
+.response-placeholder {
+  display: flex;
+  text-align: left;
+  width: 100%;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 80px;
+  border-radius: 8px;
+}
+
+.cherish-regular {
+  font-family: "Cherish", cursive;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.response-content {
+  display: flex;
+  align-items: flex-start;
+  overflow-y: auto;
+  height: 280px;
+  padding-right: 5px;
+
+  & p {
+    background-color: transparent;
+    font-size: 18px;
+    width: 100%;
+    margin: auto 0;
+    text-align: left;
+    color: white;
+  }
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background-color: rgba(255, 255, 255, 0.15);
+    -webkit-border-radius: 4px;
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    -webkit-border-radius: 4px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.6);
+  }
+}

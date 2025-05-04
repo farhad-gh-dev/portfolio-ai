@@ -24,10 +24,8 @@ body {
   height: 100vh;
   width: 100vw;
   overflow: hidden;
-  background-color: black;
 }
 
-/* Full-screen background container */
 .app-container {
   position: fixed;
   top: 0;
@@ -36,61 +34,13 @@ body {
   height: 100%;
 }
 
-.bg-image {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  overflow: auto;
-
-  &.chat-bg {
-    background-image: url("../public/chat-bg.jpg");
-  }
-
-  &.error-bg {
-    background-image: url("../public/disconnected.gif");
-  }
-
-  &.loading-bg {
-    background-image: url("../public/loading.jpg");
-    filter: blur(0);
-  }
-}
-
-.content-container {
-  position: relative;
-  z-index: 1000;
-  height: 100%;
-}
-
 .flex-center {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 100vh;
-  width: 100vw;
-}
-
-.ai-chat-container {
-  width: 100%;
   height: 100%;
-  max-width: 1800px;
-  margin: 0 auto;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 20px;
-}
-
-.cherish-regular {
-  font-family: "Cherish", cursive;
-  font-weight: 400;
-  font-style: normal;
+  width: 100%;
 }
 
 .copyright {
