@@ -1,5 +1,5 @@
 import { useWebSocketChat } from "./hooks/useWebSocketChat";
-import { ChatLayout } from "./components/ChatInterface";
+import { ChatLayout } from "./components/ChatLayout";
 import { ConnectionLostScreen } from "./components/ConnectionLostScreen";
 import { ChatInput } from "./components/ChatInput";
 import { ResponseDisplay } from "./components/ResponseDisplay";

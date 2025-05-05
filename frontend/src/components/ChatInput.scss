@@ -1,6 +1,10 @@
+@import "../variables.scss";
+
 .chat-input {
   flex: 1;
   align-self: flex-start;
+  justify-content: flex-end;
+  display: flex;
 
   &.loading {
     animation: pulse-opacity 0.5s ease-in-out infinite alternate;
@@ -26,7 +30,7 @@
   height: 280px;
 
   & textarea {
-    font-family: "Arsenal SC", sans-serif;
+    font-family: "Caveat", cursive, sans-serif;
     background-color: transparent;
     color: #002263;
     border: none;
@@ -38,6 +42,7 @@
     white-space: normal;
     word-wrap: break-word;
     padding: 0;
+    padding-right: 8px;
     text-align: right;
     min-height: 100px;
     height: auto;
@@ -49,8 +54,29 @@
 }
 
 .input-placeholder-container {
-  width: 100%;
-  font-size: 80px;
+  width: 380px;
+  font-size: 100px;
   text-align: right;
   color: #002263;
+}
+
+@media (max-width: $screen-desktop-1920) {
+  .input-placeholder-container {
+    width: 335px;
+    font-size: 85px;
+  }
+}
+
+@media (max-width: $screen-desktop-1536) {
+  .input-placeholder-container {
+    width: 280px;
+    font-size: 73px;
+  }
+}
+
+@media (max-width: $screen-desktop-1366) {
+  .input-placeholder-container {
+    width: 220px;
+    font-size: 65px;
+  }
 }

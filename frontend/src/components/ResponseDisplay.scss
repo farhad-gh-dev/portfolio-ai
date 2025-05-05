@@ -1,3 +1,5 @@
+@import "../variables.scss";
+
 .response-display {
   flex: 1;
   display: flex;
@@ -8,9 +10,9 @@
 .response-placeholder {
   display: flex;
   text-align: left;
-  width: 100%;
+  width: 400px;
   color: rgba(255, 255, 255, 0.85);
-  font-size: 80px;
+  font-size: 90px;
   border-radius: 8px;
 }
 
@@ -29,7 +31,7 @@
 
   & p {
     background-color: transparent;
-    font-size: 18px;
+    font-size: 22px;
     width: 100%;
     margin: auto 0;
     text-align: left;
@@ -50,5 +52,26 @@
     -webkit-border-radius: 4px;
     border-radius: 4px;
     background: rgba(255, 255, 255, 0.6);
+  }
+}
+
+@media (max-width: $screen-desktop-1920) {
+  .response-placeholder {
+    width: 335px;
+    font-size: 75px;
+  }
+}
+
+@media (max-width: $screen-desktop-1536) {
+  .response-placeholder {
+    width: 280px;
+    font-size: 65px;
+  }
+}
+
+@media (max-width: $screen-desktop-1366) {
+  .response-placeholder {
+    width: 220px;
+    font-size: 55px;
   }
 }

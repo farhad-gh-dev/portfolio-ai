@@ -1,5 +1,5 @@
 import React from "react";
-import "./ChatInterface.scss";
+import "./ChatLayout.scss";
 
 interface ChatLayoutProps {
   inputComponent?: React.ReactNode;

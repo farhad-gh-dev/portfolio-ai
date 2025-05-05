@@ -59,13 +59,15 @@ export const ChatInput: React.FC<ChatInputProps> = ({
     setScrollHeight(newHeight);
   }, [value]);
 
+  const shouldShowInput = value !== "" || isInputFocused;
+
   return (
     <div
       className={cn("chat-input", { loading: isLoading })}
       aria-busy={isLoading}
     >
-      <div className="input-container">
-        {value != "" || isInputFocused ? (
+      {shouldShowInput ? (
+        <div className="input-container">
           <textarea
             ref={inputRef}
             value={value}
@@ -73,7 +75,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
               setScrollHeight(e.target.scrollHeight);
               setValue(e.target.value);
             }}
-            onKeyPress={handleKeyPress}
+            onKeyDown={handleKeyPress}
             onFocus={handleFocus}
             onBlur={() => value === "" && setIsInputFocused(false)}
             placeholder="what's in your mind?"
@@ -82,15 +84,15 @@ export const ChatInput: React.FC<ChatInputProps> = ({
             rows={1}
             style={{ height: `${scrollHeight}px` }}
           />
-        ) : (
-          <div
-            className="input-placeholder-container cherish-regular"
-            onClick={handlePlaceholderClick}
-          >
-            <p>Ask Something About me</p>
-          </div>
-        )}
-      </div>
+        </div>
+      ) : (
+        <div
+          className="input-placeholder-container cherish-regular"
+          onClick={handlePlaceholderClick}
+        >
+          <p>Ask Something About me</p>
+        </div>
+      )}
     </div>
   );
 };
