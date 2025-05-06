@@ -27,24 +27,28 @@ export const ChatInput: React.FC<ChatInputProps> = ({
     scaleOptions = scaleOptions = {
       maxSize: 46,
       minSize: 22,
+      minChars: 25,
       maxChars: 100,
     };
   } else if (isDesktop1536) {
     scaleOptions = scaleOptions = {
       maxSize: 48,
       minSize: 24,
+      minChars: 25,
       maxChars: 100,
     };
   } else if (isDekstop1920) {
     scaleOptions = {
       maxSize: 60,
       minSize: 36,
+      minChars: 25,
       maxChars: 100,
     };
   } else {
     scaleOptions = {
       maxSize: 60,
       minSize: 36,
+      minChars: 25,
       maxChars: 100,
     };
   }

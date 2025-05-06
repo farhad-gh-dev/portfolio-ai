@@ -34,7 +34,7 @@
     background-color: transparent;
     color: #002263;
     border: none;
-    font-size: 40px;
+    font-size: 60px;
     outline: none;
     caret-color: white;
     resize: none;
@@ -42,13 +42,32 @@
     white-space: normal;
     word-wrap: break-word;
     padding: 0;
-    padding-right: 8px;
-    text-align: right;
+    padding-right: 10px;
     min-height: 190px;
     height: auto;
 
+    direction: rtl;
+    unicode-bidi: plaintext;
+    text-align: right;
+
     &::placeholder {
       color: rgba(0, 34, 99, 0.5);
+    }
+
+    &::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background-color: rgba(255, 255, 255, 0.15);
+      -webkit-border-radius: 4px;
+      border-radius: 4px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      -webkit-border-radius: 4px;
+      border-radius: 4px;
+      background: rgba(0, 34, 99, 0.6);
     }
   }
 }
@@ -70,7 +89,8 @@
     height: 260px;
 
     & textarea {
-      min-height: 190px;
+      min-height: 170px;
+      font-size: 60px;
     }
   }
 }
@@ -85,7 +105,8 @@
     height: 220px;
 
     & textarea {
-      min-height: 170px;
+      min-height: 140px;
+      font-size: 48px;
     }
   }
 }
@@ -97,5 +118,9 @@
   }
   .input-container {
     height: 180px;
+
+    & textarea {
+      font-size: 46px;
+    }
   }
 }
