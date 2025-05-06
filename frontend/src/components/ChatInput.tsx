@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import cn from "classnames";
 import "./ChatInput.scss";
+import { useWindowWidth } from "../hooks/useWindowWidth";
+import { calcDynamicFontSize } from "../utils";
 
 interface ChatInputProps {
   isLoading?: boolean;
@@ -18,6 +20,36 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   const [isInputFocused, setIsInputFocused] = useState(false);
   const [hasBeenSent, setHasBeenSent] = useState(false);
   const [scrollHeight, setScrollHeight] = useState(0);
+  const { isDekstop1920, isDesktop1536, isDesktop1366 } = useWindowWidth();
+
+  let scaleOptions;
+  if (isDesktop1366) {
+    scaleOptions = scaleOptions = {
+      maxSize: 46,
+      minSize: 22,
+      maxChars: 100,
+    };
+  } else if (isDesktop1536) {
+    scaleOptions = scaleOptions = {
+      maxSize: 48,
+      minSize: 24,
+      maxChars: 100,
+    };
+  } else if (isDekstop1920) {
+    scaleOptions = {
+      maxSize: 60,
+      minSize: 36,
+      maxChars: 100,
+    };
+  } else {
+    scaleOptions = {
+      maxSize: 60,
+      minSize: 36,
+      maxChars: 100,
+    };
+  }
+
+  const fontSize = calcDynamicFontSize(value, scaleOptions);
 
   const handlePlaceholderClick = () => {
     setIsInputFocused(true);
@@ -42,7 +74,6 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   };
 
   const handleFocus = () => {
-    // Clear the input when focused after sending
     if (hasBeenSent) {
       setValue("");
       setHasBeenSent(false);
@@ -82,7 +113,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
             disabled={isLoading}
             autoFocus
             rows={1}
-            style={{ height: `${scrollHeight}px` }}
+            style={{ height: `${scrollHeight}px`, fontSize: `${fontSize}px` }}
           />
         </div>
       ) : (

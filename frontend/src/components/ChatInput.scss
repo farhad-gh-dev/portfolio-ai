@@ -1,4 +1,4 @@
-@import "../variables.scss";
+@use "../variables.scss" as *;
 
 .chat-input {
   flex: 1;
@@ -44,7 +44,7 @@
     padding: 0;
     padding-right: 8px;
     text-align: right;
-    min-height: 100px;
+    min-height: 190px;
     height: auto;
 
     &::placeholder {
@@ -65,6 +65,14 @@
     width: 335px;
     font-size: 85px;
   }
+
+  .input-container {
+    height: 260px;
+
+    & textarea {
+      min-height: 190px;
+    }
+  }
 }
 
 @media (max-width: $screen-desktop-1536) {
@@ -72,11 +80,22 @@
     width: 280px;
     font-size: 73px;
   }
+
+  .input-container {
+    height: 220px;
+
+    & textarea {
+      min-height: 170px;
+    }
+  }
 }
 
 @media (max-width: $screen-desktop-1366) {
   .input-placeholder-container {
     width: 220px;
     font-size: 65px;
+  }
+  .input-container {
+    height: 180px;
   }
 }

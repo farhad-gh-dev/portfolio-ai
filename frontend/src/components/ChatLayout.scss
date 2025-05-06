@@ -1,4 +1,4 @@
-@import "../variables.scss";
+@use "../variables.scss" as *;
 
 .chat-interface {
   display: flex;
@@ -30,7 +30,7 @@
 @media (max-width: $screen-desktop-1920) {
   .split-layout {
     gap: 60px;
-    width: 800px;
+    width: 880px;
     height: 350px;
     margin-bottom: 255px;
   }
@@ -40,6 +40,7 @@
   .split-layout {
     gap: 50px;
     height: 305px;
+    width: 770px;
     margin-bottom: 225px;
   }
 }
@@ -48,6 +49,7 @@
   .split-layout {
     height: 360px;
     height: 260px;
+    width: 730px;
     margin-bottom: 190px;
   }
 }
