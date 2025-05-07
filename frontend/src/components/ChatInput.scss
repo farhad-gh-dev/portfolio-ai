@@ -59,7 +59,7 @@
     }
 
     &::-webkit-scrollbar-track {
-      background-color: rgba(255, 255, 255, 0.15);
+      background-color: rgba(0, 34, 99, 0.15);
       -webkit-border-radius: 4px;
       border-radius: 4px;
     }
@@ -67,7 +67,7 @@
     &::-webkit-scrollbar-thumb {
       -webkit-border-radius: 4px;
       border-radius: 4px;
-      background: rgba(0, 34, 99, 0.6);
+      background: rgba(0, 34, 99, 0.5);
     }
   }
 }

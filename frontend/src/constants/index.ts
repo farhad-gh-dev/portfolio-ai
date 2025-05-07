@@ -11,4 +11,6 @@ export const TEXTS = {
   footer: "Designed and Developed by Farhad",
   responsePlaceholder: "And the Answer might Surprise you",
   questionPlaceholder: "what's in your mind?",
+  inputPlaceholder: "Ask Something About me",
+  textareaPlaceholder: "what's in your mind?",
 };

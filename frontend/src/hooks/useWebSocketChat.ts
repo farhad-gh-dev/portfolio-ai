@@ -5,7 +5,7 @@ import { Message, WebSocketResponse } from "../types";
 interface UseWebSocketChatResult {
   readyState: number;
   messages: Message[];
-  lastResponse: string;
+  lastResponse: Message | null;
   isLoading: boolean;
   sendMessage: (text: string) => void;
 }
@@ -13,7 +13,7 @@ interface UseWebSocketChatResult {
 export const useWebSocketChat = (socketUrl: string): UseWebSocketChatResult => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [clientId, setClientId] = useState<string | null>(null);
-  const [lastResponse, setLastResponse] = useState<string>("");
+  const [lastResponse, setLastResponse] = useState<Message | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const {
@@ -42,7 +42,11 @@ export const useWebSocketChat = (socketUrl: string): UseWebSocketChatResult => {
             },
           ]);
         } else if (data.type === "text_response") {
-          setLastResponse(data.message);
+          setLastResponse({
+            text: data.message,
+            sender: "ai",
+            timestamp: data.timestamp,
+          });
           setMessages((prev) => [
             ...prev,
             {

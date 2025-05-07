@@ -21,7 +21,7 @@ function App() {
           inputComponent={
             <ChatInput onSend={sendMessage} isLoading={isLoading} />
           }
-          answerComponent={<ResponseDisplay text={lastResponse} />}
+          answerComponent={<ResponseDisplay response={lastResponse} />}
         />
       ) : (
         <ConnectionLostScreen />

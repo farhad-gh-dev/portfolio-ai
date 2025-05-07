@@ -1,8 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
 import cn from "classnames";
-import "./ChatInput.scss";
 import { useWindowWidth } from "../hooks/useWindowWidth";
 import { calcDynamicFontSize } from "../utils";
+import { AnimatePresence, motion } from "motion/react";
+import { TEXTS } from "../constants";
+import {
+  INPUT_ANIMATIONS,
+  INPUT_PLACEHOLDER_ANIMATION,
+} from "../constants/animations";
+import "./ChatInput.scss";
 
 interface ChatInputProps {
   isLoading?: boolean;
@@ -24,16 +30,16 @@ export const ChatInput: React.FC<ChatInputProps> = ({
 
   let scaleOptions;
   if (isDesktop1366) {
-    scaleOptions = scaleOptions = {
+    scaleOptions = {
       maxSize: 46,
       minSize: 22,
       minChars: 25,
       maxChars: 100,
     };
   } else if (isDesktop1536) {
-    scaleOptions = scaleOptions = {
+    scaleOptions = {
       maxSize: 48,
-      minSize: 24,
+      minSize: 28,
       minChars: 25,
       maxChars: 100,
     };
@@ -94,40 +100,51 @@ export const ChatInput: React.FC<ChatInputProps> = ({
     setScrollHeight(newHeight);
   }, [value]);
 
-  const shouldShowInput = value !== "" || isInputFocused;
+  const shouldShowPlaceholder = value === "" && !isInputFocused;
 
   return (
     <div
       className={cn("chat-input", { loading: isLoading })}
       aria-busy={isLoading}
     >
-      {shouldShowInput ? (
-        <div className="input-container">
-          <textarea
-            ref={inputRef}
-            value={value}
-            onChange={(e) => {
-              setScrollHeight(e.target.scrollHeight);
-              setValue(e.target.value);
-            }}
-            onKeyDown={handleKeyPress}
-            onFocus={handleFocus}
-            onBlur={() => value === "" && setIsInputFocused(false)}
-            placeholder="what's in your mind?"
-            disabled={isLoading}
-            autoFocus
-            rows={1}
-            style={{ height: `${scrollHeight}px`, fontSize: `${fontSize}px` }}
-          />
-        </div>
-      ) : (
-        <div
-          className="input-placeholder-container cherish-regular"
-          onClick={handlePlaceholderClick}
-        >
-          <p>Ask Something About me</p>
-        </div>
-      )}
+      <AnimatePresence mode="wait">
+        {shouldShowPlaceholder ? (
+          <motion.div
+            key="input-placeholder"
+            className="input-placeholder-container cherish-regular"
+            onClick={handlePlaceholderClick}
+            {...INPUT_PLACEHOLDER_ANIMATION}
+          >
+            <p>{TEXTS.inputPlaceholder}</p>
+          </motion.div>
+        ) : (
+          <motion.div
+            key="input-container"
+            className="input-container"
+            {...INPUT_ANIMATIONS}
+          >
+            <textarea
+              ref={inputRef}
+              value={value}
+              onChange={(e) => {
+                setScrollHeight(e.target.scrollHeight);
+                setValue(e.target.value);
+              }}
+              onKeyDown={handleKeyPress}
+              onFocus={handleFocus}
+              onBlur={() => value === "" && setIsInputFocused(false)}
+              placeholder={TEXTS.textareaPlaceholder}
+              disabled={isLoading}
+              autoFocus
+              rows={1}
+              style={{
+                height: `${scrollHeight}px`,
+                fontSize: `${fontSize}px`,
+              }}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
