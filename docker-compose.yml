@@ -5,26 +5,30 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
+    container_name: portfolio-ai-backend
+    restart: unless-stopped
     ports:
       - "3000:3000"
     environment:
       - NODE_ENV=production
-    volumes:
-      - ./backend:/app
-      - /app/node_modules
-    restart: unless-stopped
+      - PORT=3000
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY:-}
+    networks:
+      - portfolio-ai-network
 
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+    container_name: portfolio-ai-frontend
+    restart: unless-stopped
     ports:
-      - "5173:5173"
+      - "80:80"
     depends_on:
       - backend
-    environment:
-      - VITE_API_URL=http://backend:3000
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
-    restart: unless-stopped
+    networks:
+      - portfolio-ai-network
+
+networks:
+  portfolio-ai-network:
+    driver: bridge

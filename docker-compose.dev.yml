@@ -5,28 +5,40 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile.dev
+    container_name: portfolio-ai-backend-dev
+    restart: unless-stopped
     ports:
       - "3000:3000"
-    environment:
-      - NODE_ENV=development
     volumes:
       - ./backend:/app
       - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY:-}
     command: npm run watch
-    restart: unless-stopped
-
+    networks:
+      - portfolio-ai-dev-network
   frontend-dev:
     build:
       context: ./frontend
       dockerfile: Dockerfile.dev
+    container_name: portfolio-ai-frontend-dev
+    restart: unless-stopped
     ports:
       - "5173:5173"
-    depends_on:
-      - backend-dev
-    environment:
-      - VITE_API_URL=http://localhost:3000
     volumes:
       - ./frontend:/app
       - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - VITE_BACKEND_URL=ws://localhost:3000
+    depends_on:
+      - backend-dev
     command: npm run dev
-    restart: unless-stopped
+    networks:
+      - portfolio-ai-dev-network
+
+networks:
+  portfolio-ai-dev-network:
+    driver: bridge

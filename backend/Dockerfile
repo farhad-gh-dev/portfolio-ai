@@ -1,32 +1,22 @@
-FROM node:20-alpine as build
+FROM node:20-alpine
 
 WORKDIR /app
 
 # Copy package files and install dependencies
 COPY package*.json ./
-RUN npm ci
+RUN npm install
 
-# Copy source code
+# Copy the rest of the application code
 COPY . .
 
-# Build the application
+# Build TypeScript code
 RUN npm run build
 
-# Production stage
-FROM node:20-alpine
-
-WORKDIR /app
-
-# Copy built files from build stage
-COPY --from=build /app/dist ./dist
-COPY --from=build /app/node_modules ./node_modules
-COPY package*.json ./
-
-# Set environment variables
-ENV NODE_ENV=production
+# Environment variables
 ENV PORT=3000
+ENV NODE_ENV=production
 
-# Expose the port
+# Expose port
 EXPOSE 3000
 
 # Start the application
