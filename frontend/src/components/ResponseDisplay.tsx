@@ -9,6 +9,7 @@ import {
 } from "../constants/animations";
 import type { Message } from "../types";
 import "./ResponseDisplay.scss";
+import { AnimatedTextFM } from "./AnimatedTextFM";
 
 interface ResponseDisplayProps {
   response?: Message | null;
@@ -65,13 +66,7 @@ export const ResponseDisplay: React.FC<ResponseDisplayProps> = ({
             className="response-content"
             {...RESPONSE_ANIMATION}
           >
-            <p
-              style={{
-                fontSize: `${fontSize}px`,
-              }}
-            >
-              {text}
-            </p>
+            <AnimatedTextFM text={text} style={{ fontSize: `${fontSize}px` }} />
           </motion.div>
         )}
       </AnimatePresence>
