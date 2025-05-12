@@ -1,16 +1,42 @@
 @use "../variables.scss" as *;
 
 .chat-interface {
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
   width: 100%;
   height: 100%;
   padding: 20px;
+}
+
+.chat-background,
+.chat-background-layer2,
+.chat-background-layer3 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+  transform: scale(1.03);
+}
+
+.chat-background {
   background-image: url("/chat-bg.jpg");
+  z-index: 0;
+}
+
+.chat-background-layer2 {
+  background-image: url("/chat-bg-layer2.png");
+  z-index: 10;
+}
+
+.chat-background-layer3 {
+  background-image: url("/chat-bg-layer3.png");
+  z-index: 20;
 }
 
 .split-layout {
@@ -19,6 +45,7 @@
   width: 1000px;
   height: 420px;
   margin-bottom: 305px;
+  z-index: 1000;
 }
 
 .split-border {
@@ -52,4 +79,24 @@
     width: 730px;
     margin-bottom: 190px;
   }
+}
+
+:root {
+  color-scheme: light dark;
+
+  --black: oklch(18% 0.003 17.5);
+  --bright_white: oklch(94.75% 0.04 73);
+}
+
+html {
+  background: light-dark(var(--bright_white), var(--black));
+}
+
+#puddle-container {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  color: light-dark(var(--black), var(--bright_white));
+  user-select: none;
+  font-family: "Fira Code", monospace;
 }
