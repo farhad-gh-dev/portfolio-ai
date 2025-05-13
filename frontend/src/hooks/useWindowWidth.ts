@@ -14,7 +14,7 @@ export function useWindowWidth() {
   }, []);
 
   return {
-    isDekstop1920: width <= 1920,
+    isDesktop1920: width <= 1920,
     isDesktop1536: width <= 1536,
     isDesktop1366: width <= 1366,
   };

@@ -18,7 +18,7 @@ interface ResponseDisplayProps {
 export const ResponseDisplay: React.FC<ResponseDisplayProps> = ({
   response,
 }) => {
-  const { isDekstop1920, isDesktop1536, isDesktop1366 } = useWindowWidth();
+  const { isDesktop1920, isDesktop1536, isDesktop1366 } = useWindowWidth();
   const text = response?.text || "";
 
   let scaleOptions;
@@ -34,7 +34,7 @@ export const ResponseDisplay: React.FC<ResponseDisplayProps> = ({
       minSize: 20,
       maxChars: 100,
     };
-  } else if (isDekstop1920) {
+  } else if (isDesktop1920) {
     scaleOptions = {
       maxSize: 60,
       minSize: 24,

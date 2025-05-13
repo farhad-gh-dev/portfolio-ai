@@ -26,7 +26,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   const [isInputFocused, setIsInputFocused] = useState(false);
   const [hasBeenSent, setHasBeenSent] = useState(false);
   const [scrollHeight, setScrollHeight] = useState(0);
-  const { isDekstop1920, isDesktop1536, isDesktop1366 } = useWindowWidth();
+  const { isDesktop1920, isDesktop1536, isDesktop1366 } = useWindowWidth();
 
   let scaleOptions;
   if (isDesktop1366) {
@@ -43,7 +43,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
       minChars: 25,
       maxChars: 100,
     };
-  } else if (isDekstop1920) {
+  } else if (isDesktop1920) {
     scaleOptions = {
       maxSize: 60,
       minSize: 36,
