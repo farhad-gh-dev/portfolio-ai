@@ -1,6 +1,7 @@
 import React from "react";
 import "./ChatLayout.scss";
 import { WaterFilter } from "./WaterFilter";
+import { TEXTS } from "../constants";
 
 interface ChatLayoutProps {
   inputComponent?: React.ReactNode;
@@ -37,8 +38,8 @@ export const ChatLayout: React.FC<ChatLayoutProps> = ({
       ) : (
         <div className="flex-center">
           <div className="loader"></div>
-          <h2>Connecting to the AI Chat Service...</h2>
-          <p>Please wait while we establish a connection.</p>
+          <h2>{TEXTS.connectingToApi}</h2>
+          <p>{TEXTS.pleaseWait}</p>
         </div>
       )}
     </div>

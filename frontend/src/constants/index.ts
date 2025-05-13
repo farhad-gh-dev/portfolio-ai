@@ -13,4 +13,8 @@ export const TEXTS = {
   questionPlaceholder: "what's in your mind?",
   inputPlaceholder: "Ask Something About me",
   textareaPlaceholder: "what's in your mind?",
+  connectingToApi: "Connecting to the AI Chat Service...",
+  pleaseWait: "Please wait while we establish a connection.",
+  disconnected: "Disconnected",
+  checkYourConnection: "Please check your connection or try again later.",
 };
