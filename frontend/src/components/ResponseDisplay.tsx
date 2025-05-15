@@ -1,5 +1,5 @@
 import React from "react";
-import { TEXTS } from "../constants";
+import { RESPONSE_FONT_SCALE_OPTIONS, TEXTS } from "../constants";
 import { calcDynamicFontSize } from "../utils";
 import { useWindowWidth } from "../hooks/useWindowWidth";
 import { AnimatePresence, motion } from "motion/react";
@@ -18,35 +18,13 @@ interface ResponseDisplayProps {
 export const ResponseDisplay: React.FC<ResponseDisplayProps> = ({
   response,
 }) => {
-  const { isDesktop1920, isDesktop1536, isDesktop1366 } = useWindowWidth();
+  const { currentSize } = useWindowWidth();
   const text = response?.text || "";
 
-  let scaleOptions;
-  if (isDesktop1366) {
-    scaleOptions = {
-      maxSize: 48,
-      minSize: 20,
-      maxChars: 100,
-    };
-  } else if (isDesktop1536) {
-    scaleOptions = {
-      maxSize: 52,
-      minSize: 20,
-      maxChars: 100,
-    };
-  } else if (isDesktop1920) {
-    scaleOptions = {
-      maxSize: 60,
-      minSize: 24,
-      maxChars: 100,
-    };
-  } else {
-    scaleOptions = {
-      maxSize: 60,
-      minSize: 26,
-      maxChars: 260,
-    };
-  }
+  const scaleOptions =
+    RESPONSE_FONT_SCALE_OPTIONS[
+      currentSize as keyof typeof RESPONSE_FONT_SCALE_OPTIONS
+    ];
 
   const fontSize = calcDynamicFontSize(text, scaleOptions);
   return (

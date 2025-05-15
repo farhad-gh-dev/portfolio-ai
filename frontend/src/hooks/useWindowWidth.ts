@@ -13,9 +13,20 @@ export function useWindowWidth() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  const currentSize = (width: number): string => {
+    switch (width) {
+      case 1920:
+        return "desktop1920";
+      case 1536:
+        return "desktop1536";
+      case 1366:
+        return "desktop1366";
+      default:
+        return "default";
+    }
+  };
+
   return {
-    isDesktop1920: width <= 1920,
-    isDesktop1536: width <= 1536,
-    isDesktop1366: width <= 1366,
+    currentSize: currentSize(width),
   };
 }

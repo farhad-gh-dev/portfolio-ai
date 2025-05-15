@@ -3,7 +3,7 @@ import cn from "classnames";
 import { useWindowWidth } from "../hooks/useWindowWidth";
 import { calcDynamicFontSize } from "../utils";
 import { AnimatePresence, motion } from "motion/react";
-import { TEXTS } from "../constants";
+import { INPUT_FONT_SCALE_OPTIONS, TEXTS } from "../constants";
 import {
   INPUT_ANIMATIONS,
   INPUT_PLACEHOLDER_ANIMATION,
@@ -26,38 +26,12 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   const [isInputFocused, setIsInputFocused] = useState(false);
   const [hasBeenSent, setHasBeenSent] = useState(false);
   const [scrollHeight, setScrollHeight] = useState(0);
-  const { isDesktop1920, isDesktop1536, isDesktop1366 } = useWindowWidth();
+  const { currentSize } = useWindowWidth();
 
-  let scaleOptions;
-  if (isDesktop1366) {
-    scaleOptions = {
-      maxSize: 46,
-      minSize: 22,
-      minChars: 25,
-      maxChars: 100,
-    };
-  } else if (isDesktop1536) {
-    scaleOptions = {
-      maxSize: 48,
-      minSize: 28,
-      minChars: 25,
-      maxChars: 100,
-    };
-  } else if (isDesktop1920) {
-    scaleOptions = {
-      maxSize: 60,
-      minSize: 36,
-      minChars: 25,
-      maxChars: 100,
-    };
-  } else {
-    scaleOptions = {
-      maxSize: 60,
-      minSize: 36,
-      minChars: 25,
-      maxChars: 100,
-    };
-  }
+  const scaleOptions =
+    INPUT_FONT_SCALE_OPTIONS[
+      currentSize as keyof typeof INPUT_FONT_SCALE_OPTIONS
+    ];
 
   const fontSize = calcDynamicFontSize(value, scaleOptions);
 

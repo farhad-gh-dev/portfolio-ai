@@ -18,3 +18,37 @@ export const TEXTS = {
   disconnected: "Disconnected",
   checkYourConnection: "Please check your connection or try again later.",
 };
+
+export const RESPONSE_FONT_SCALE_OPTIONS = {
+  desktop1920: { maxSize: 60, minSize: 24, maxChars: 100 },
+  desktop1536: { maxSize: 52, minSize: 20, maxChars: 100 },
+  desktop1366: { maxSize: 48, minSize: 20, maxChars: 100 },
+  default: { maxSize: 60, minSize: 26, maxChars: 260 },
+} as const;
+
+export const INPUT_FONT_SCALE_OPTIONS = {
+  desktop1920: {
+    maxSize: 60,
+    minSize: 36,
+    minChars: 25,
+    maxChars: 100,
+  },
+  desktop1536: {
+    maxSize: 48,
+    minSize: 28,
+    minChars: 25,
+    maxChars: 100,
+  },
+  desktop1366: {
+    maxSize: 46,
+    minSize: 22,
+    minChars: 25,
+    maxChars: 100,
+  },
+  default: {
+    maxSize: 60,
+    minSize: 36,
+    minChars: 25,
+    maxChars: 100,
+  },
+} as const;

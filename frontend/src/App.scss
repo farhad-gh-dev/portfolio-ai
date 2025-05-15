@@ -60,6 +60,10 @@ body {
   display: none;
 }
 
+.display-inline-block {
+  display: inline-block;
+}
+
 // add a circle on top left corner of .app-container using after psudo
 .app-container::after {
   content: "xxl screen";
