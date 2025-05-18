@@ -1,10 +1,9 @@
 import React from "react";
 import { TEXTS } from "../constants";
-import { SongPlayer } from "./SongPlayer";
 import { WaterFilter } from "./WaterFilter";
 
 import "./ChatLayout.scss";
-
+import AudioWaveVisualizer from "./Test";
 interface ChatLayoutProps {
   inputComponent?: React.ReactNode;
   answerComponent?: React.ReactNode;
@@ -18,7 +17,7 @@ export const ChatLayout: React.FC<ChatLayoutProps> = ({
 }) => {
   return (
     <>
-      <SongPlayer />
+      <AudioWaveVisualizer />
       <div className="chat-interface">
         <WaterFilter id="turbulence-low" scale={25} noisePattern="2" />
         <WaterFilter id="turbulence-high" scale={8} noisePattern="S" />
