@@ -23,9 +23,6 @@ export const ChatLayout: React.FC<ChatLayoutProps> = ({
       currentSize as keyof typeof AUDIO_VISUALIZER_SIZE_OPTIONS
     ];
 
-  console.log(currentSize);
-  console.log("Audio Visualizer Size:", audioVisualizerSize);
-
   return (
     <>
       <div className="chat-interface">
