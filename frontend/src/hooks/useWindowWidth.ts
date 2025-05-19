@@ -14,15 +14,14 @@ export function useWindowWidth() {
   }, []);
 
   const currentSize = (width: number): string => {
-    switch (width) {
-      case 1920:
-        return "desktop1920";
-      case 1536:
-        return "desktop1536";
-      case 1366:
-        return "desktop1366";
-      default:
-        return "default";
+    if (width <= 1366) {
+      return "desktop1366";
+    } else if (width <= 1536) {
+      return "desktop1536";
+    } else if (width <= 1920) {
+      return "desktop1920";
+    } else {
+      return "default";
     }
   };
 

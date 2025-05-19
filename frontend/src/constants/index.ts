@@ -52,3 +52,22 @@ export const INPUT_FONT_SCALE_OPTIONS = {
     maxChars: 100,
   },
 } as const;
+
+export const AUDIO_VISUALIZER_SIZE_OPTIONS = {
+  desktop1920: {
+    width: 120,
+    height: 350,
+  },
+  desktop1536: {
+    width: 100,
+    height: 305,
+  },
+  desktop1366: {
+    width: 100,
+    height: 260,
+  },
+  default: {
+    width: 140,
+    height: 420,
+  },
+} as const;

@@ -1,9 +1,10 @@
 import React from "react";
-import { TEXTS } from "../constants";
+import { AUDIO_VISUALIZER_SIZE_OPTIONS, TEXTS } from "../constants";
 import { WaterFilter } from "./WaterFilter";
 
 import "./ChatLayout.scss";
-import AudioWaveVisualizer from "./Test";
+import AudioWaveVisualizer from "./AudioWaveVisualizer";
+import { useWindowWidth } from "../hooks/useWindowWidth";
 interface ChatLayoutProps {
   inputComponent?: React.ReactNode;
   answerComponent?: React.ReactNode;
@@ -15,9 +16,18 @@ export const ChatLayout: React.FC<ChatLayoutProps> = ({
   answerComponent,
   isConnecting,
 }) => {
+  const { currentSize } = useWindowWidth();
+
+  const audioVisualizerSize =
+    AUDIO_VISUALIZER_SIZE_OPTIONS[
+      currentSize as keyof typeof AUDIO_VISUALIZER_SIZE_OPTIONS
+    ];
+
+  console.log(currentSize);
+  console.log("Audio Visualizer Size:", audioVisualizerSize);
+
   return (
     <>
-      <AudioWaveVisualizer />
       <div className="chat-interface">
         <WaterFilter id="turbulence-low" scale={25} noisePattern="2" />
         <WaterFilter id="turbulence-high" scale={8} noisePattern="S" />
@@ -32,19 +42,23 @@ export const ChatLayout: React.FC<ChatLayoutProps> = ({
         />
         <div className="chat-background-layer3" />
 
-        {!isConnecting ? (
-          <div className="split-layout">
-            {inputComponent}
-            <div className="split-border" />
-            {answerComponent}
-          </div>
-        ) : (
-          <div className="flex-center">
-            <div className="loader"></div>
-            <h2>{TEXTS.connectingToApi}</h2>
-            <p>{TEXTS.pleaseWait}</p>
-          </div>
-        )}
+        <div
+          className="split-layout"
+          style={{ display: !isConnecting ? "flex" : "none" }}
+        >
+          {inputComponent}
+          <AudioWaveVisualizer size={audioVisualizerSize} />
+          {answerComponent}
+        </div>
+
+        <div
+          className="flex-center"
+          style={{ display: isConnecting ? "flex" : "none" }}
+        >
+          <div className="loader"></div>
+          <h2>{TEXTS.connectingToApi}</h2>
+          <p>{TEXTS.pleaseWait}</p>
+        </div>
       </div>
     </>
   );

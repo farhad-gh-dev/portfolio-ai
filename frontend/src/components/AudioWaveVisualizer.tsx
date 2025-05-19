@@ -1,17 +1,24 @@
 import React, { useEffect, useRef } from "react";
 
-const PENDULUM_SPEED = 0.002; // Speed of the pendulum
+const PENDULUM_SPEED = 0.002;
 const PENDULUM_AMP_MOD_AMOUNT = 0.4;
-const K_SCALE_FACTOR = Math.PI / 50000; // Speed of the wave
+const K_SCALE_FACTOR = Math.PI / 50000;
 const PENDULUM_K_MOD_AMOUNT = 0.35;
 const MIN_VISUAL_AMP = 10;
-const MAX_VISUAL_AMP = 100; // Height of the wave
-const LOUDNESS_SMOOTHING_FACTOR = 0.05; // Smoothness of wave height
-const FREQUENCY_SMOOTHING_FACTOR = 0.05; // Smoothness of wave frequency
-const WAVE_FLOW_SPEED = 0.015; // Speed of wave flow
-const SILENCE_THRESHOLD_AMP = 15; // Threshold for silence detection
+const MAX_VISUAL_AMP = 100;
+const LOUDNESS_SMOOTHING_FACTOR = 0.5;
+const FREQUENCY_SMOOTHING_FACTOR = 0.05;
+const WAVE_FLOW_SPEED = 0.015;
+const SILENCE_THRESHOLD_AMP = 15;
 
-const AudioWaveVisualizer: React.FC = () => {
+interface AudioWaveVisualizerProps {
+  size: {
+    width: number;
+    height: number;
+  };
+}
+
+const AudioWaveVisualizer: React.FC<AudioWaveVisualizerProps> = ({ size }) => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const animationRef = useRef<number>(0);
@@ -104,7 +111,7 @@ const AudioWaveVisualizer: React.FC = () => {
       baseAmp *= smoothedLoudnessRef.current;
     baseAmp = Math.max(MIN_VISUAL_AMP * 0.1, baseAmp);
     let finalAmp = baseAmp * (1 + PENDULUM_AMP_MOD_AMOUNT * pendMod);
-    finalAmp = Math.max(1, finalAmp);
+    finalAmp = Math.min(30, finalAmp);
 
     // k calc
     let baseK = smoothedFreqRef.current * K_SCALE_FACTOR;
@@ -114,32 +121,45 @@ const AudioWaveVisualizer: React.FC = () => {
 
     // draw
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    const midY = canvas.height / 2;
+    const midX = canvas.width / 2;
 
-    // baseline
+    // Wave
     ctx.beginPath();
-    ctx.moveTo(0, midY);
-    ctx.lineTo(canvas.width, midY);
-    ctx.strokeStyle = "rgba(255, 255, 255, 0.3)";
-    ctx.lineWidth = 1;
-    ctx.stroke();
-
-    // wave
-    ctx.beginPath();
-    ctx.strokeStyle = "rgb(220, 50, 50)";
     ctx.lineWidth = 2;
-    ctx.moveTo(0, midY);
+
+    // Add glow effect
+    const glowColor = "#88b2b4"; // Use a color that matches your gradient
+    const glowIntensity = 100 * smoothedLoudnessRef.current; // Intensity based on audio
+    ctx.shadowColor = glowColor;
+    ctx.shadowBlur = glowIntensity;
+    ctx.shadowOffsetX = 0;
+    ctx.shadowOffsetY = 0;
+
+    // Create gradient for stroke
+    const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+    gradient.addColorStop(0, "#88b2b4"); // Teal at top
+    gradient.addColorStop(1, "#88b2b4"); // Red at bottom
+    ctx.strokeStyle = gradient;
+    ctx.moveTo(midX, 0);
 
     phaseRef.current -= WAVE_FLOW_SPEED;
-    for (let x = 1; x < canvas.width; x++) {
-      const normX = x / (canvas.width - 1);
-      let env = Math.sin(normX * Math.PI);
+    for (let y = 1; y < canvas.height; y++) {
+      const normY = y / (canvas.height - 1);
+      let env = Math.sin(normY * Math.PI);
       env = Math.max(0, env);
-      const ySin = Math.sin(x * finalK + phaseRef.current);
-      const y = midY + env * finalAmp * ySin;
+      const xSin = Math.sin(y * finalK + phaseRef.current);
+      const x = midX + env * finalAmp * xSin;
       ctx.lineTo(x, y);
     }
     ctx.stroke();
+  };
+
+  const handleCanvasClick = () => {
+    if (audioRef.current?.paused) {
+      audioRef.current?.play();
+    } else {
+      audioRef.current?.pause();
+    }
   };
 
   useEffect(() => {
@@ -148,16 +168,30 @@ const AudioWaveVisualizer: React.FC = () => {
     }
   }, [audioRef.current?.readyState]);
 
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.volume = 0.5;
+    }
+  }, []);
+
   return (
-    <div style={{ position: "fixed", top: 20, left: 20, zIndex: 1000 }}>
+    <div style={{ width: size.width, height: size.height }}>
       <audio
         ref={audioRef}
         controls
         className="mt-4"
         crossOrigin="anonymous"
         src="/Dont_Fear_the_Reaper.mp3"
+        style={{ display: "none" }}
+        preload="auto"
       />
-      <canvas ref={canvasRef} width={350} height={150} />
+      <div onClick={handleCanvasClick}>
+        <canvas
+          ref={canvasRef}
+          width={size.width}
+          height={size.height}
+        ></canvas>
+      </div>
     </div>
   );
 };
