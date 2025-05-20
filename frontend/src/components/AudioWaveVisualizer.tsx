@@ -163,15 +163,21 @@ const AudioWaveVisualizer: React.FC<AudioWaveVisualizerProps> = ({ size }) => {
   };
 
   useEffect(() => {
-    if (audioRef.current?.readyState === 4) {
-      initializeAudio();
-    }
-  }, [audioRef.current?.readyState]);
+    const audioEl = audioRef.current;
+    if (!audioEl) return;
 
-  useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.volume = 0.5;
-    }
+    const onCanPlay = () => {
+      audioEl.volume = 0.5;
+      initializeAudio();
+      draw();
+    };
+    audioEl.addEventListener("canplay", onCanPlay);
+
+    return () => {
+      audioEl.removeEventListener("canplay", onCanPlay);
+      cancelAnimationFrame(animationRef.current);
+      audioContextRef.current?.close();
+    };
   }, []);
 
   return (
@@ -197,5 +203,3 @@ const AudioWaveVisualizer: React.FC<AudioWaveVisualizerProps> = ({ size }) => {
 };
 
 export default AudioWaveVisualizer;
-
-// if (animationRef.current) cancelAnimationFrame(animationRef.current);
