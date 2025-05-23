@@ -185,11 +185,10 @@ const AudioWaveVisualizer: React.FC<AudioWaveVisualizerProps> = ({ size }) => {
       <audio
         ref={audioRef}
         controls
-        className="mt-4"
         crossOrigin="anonymous"
         src="/Dont_Fear_the_Reaper.mp3"
-        style={{ display: "none" }}
         preload="auto"
+        style={{ display: "none" }}
       />
       <div onClick={handleCanvasClick}>
         <canvas

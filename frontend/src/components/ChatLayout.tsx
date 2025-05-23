@@ -26,8 +26,10 @@ export const ChatLayout: React.FC<ChatLayoutProps> = ({
   return (
     <>
       <div className="chat-interface">
-        <WaterFilter id="turbulence-low" scale={25} noisePattern="2" />
+        <WaterFilter id="turbulence-low" scale={30} noisePattern="2" />
         <WaterFilter id="turbulence-high" scale={8} noisePattern="S" />
+
+        <div className="chat-background-overlay"></div>
 
         <div
           className="chat-background"
